@@ -1,0 +1,10 @@
+// trinhminhtriet
+//@version=3
+study("Cryplive_MAs" , overlay=true)
+plot(sma(close,200), title="SMA200", color = red)
+plot(sma(close,50), title="SMA50",color = yellow)
+plot(ema(close,100), title="EMA100",color = orange)
+plot(sma(close,50), title="EMA50",color = yellow)
+plot(ema(close,21), title="EMA21",color = green)
+plot(ema(close,13), title="EMA13",color = blue)
+plot(ema(close,5), title="EMA5",color = white)
