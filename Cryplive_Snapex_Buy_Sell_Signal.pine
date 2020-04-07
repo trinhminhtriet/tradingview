@@ -1,0 +1,34 @@
+// trinhminhtriet
+// https://triettrinh.com
+// Customize to trade in TF m1
+
+study("Cryplive_Buy_Sell_Signal", overlay = true)
+
+Factor=input(1, minval=1,maxval = 100)
+Pd=input(7, minval=1,maxval = 100)
+
+
+Up=hl2-(Factor*atr(Pd))
+Dn=hl2+(Factor*atr(Pd))
+
+
+TrendUp=close[1]>TrendUp[1]? max(Up,TrendUp[1]) : Up
+TrendDown=close[1]<TrendDown[1]? min(Dn,TrendDown[1]) : Dn
+
+Trend = close > TrendDown[1] ? 1: close< TrendUp[1]? -1: nz(Trend[1],1)
+Tsl = Trend==1? TrendUp: TrendDown
+
+linecolor = Trend == 1 ? green : red
+
+// plot(Tsl, color = linecolor, style = line, linewidth = 2, title = "Cryplive_Snapex_Buy_Sell_Signal")
+
+// plotshape(cross(close,Tsl) and close>Tsl, "Up Arrow", shape.triangleup, location.belowbar, green, 0, 0)
+// plotshape(cross(Tsl,close) and close<Tsl, "Down Arrow", shape.triangledown , location.abovebar, red, 0, 0)
+
+plotarrow(Trend == 1 and Trend[1] == -1 ? Trend : na, title="Up Entry Arrow", colorup=lime, maxheight=30, minheight=10, transp=0)
+plotarrow(Trend == -1 and Trend[1] == 1 ? Trend : na, title="Down Entry Arrow", colordown=red, maxheight=30, minheight=10, transp=0)
+
+// plot(ema(close,100), title="EMA100", color = orange, style = line, linewidth = 1)
+// plot(sma(close,50), title="EMA50", color = yellow, style = line, linewidth = 1)
+//plot(ema(close,21), title="EMA21", color = blue, style = line, linewidth = 2)
+// plot(ema(close,13), title="EMA13", color = lime, style = line, linewidth = 1)
