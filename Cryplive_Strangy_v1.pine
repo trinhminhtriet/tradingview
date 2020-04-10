@@ -25,15 +25,17 @@ adx(dilen, adxlen) =>
 	[adx, plus, minus]
 
 [sig, up, down] = adx(dilen, adxlen)
+diplus = up
+diminus = down
 
 // plot(ADX_Entry, color=color.white, linewidth=1)
 adx_color = down-up > 0 ? color.red : color.lime
 // bgcolor(adx_color, transp=90)
 plot(sig, title="ADX", color=adx_color, linewidth=1)
 plot(sig, title="ADX", color=adx_color, style=plot.style_columns, linewidth = 2, transp=90)
-plot(up, color=color.green, linewidth=1, title="DI+", transp=60)
-plot(down, color=color.red, linewidth=1, title="DI-", transp=60)
-plot(cross(up,down) ? down : na, color=adx_color, style=plot.style_circles, linewidth=3, title="Cross DI") 
+plot(diplus, color=color.green, linewidth=1, title="DI+", transp=60)
+plot(diminus, color=color.red, linewidth=1, title="DI-", transp=60)
+plot(cross(diplus,diminus) ? diminus : na, color=adx_color, style=plot.style_circles, linewidth=3, title="Cross DI") 
 
 
 //RSI Divergence
