@@ -7,7 +7,7 @@ study("Cryplive_Strangy_v1")
 
 adxlen = input(9, title="ADX Smoothing")
 dilen = input(14, title="DI Length")
-ADX_Entry = input(25, title="ADX Entry")
+ADX_Entry = input(20, title="ADX Entry")
 
 //ADX
 dirmov(len) =>
@@ -27,14 +27,15 @@ adx(dilen, adxlen) =>
 [sig, up, down] = adx(dilen, adxlen)
 diplus = up
 diminus = down
+adx_signal = sig
 
 // plot(ADX_Entry, color=color.white, linewidth=1)
-adx_color = down-up > 0 ? color.red : color.lime
+adx_color = diminus-diplus > 0 ? color.red : color.lime
 // bgcolor(adx_color, transp=90)
-plot(sig, title="ADX", color=adx_color, linewidth=1)
-plot(sig, title="ADX", color=adx_color, style=plot.style_columns, linewidth = 2, transp=90)
-plot(diplus, color=color.green, linewidth=1, title="DI+", transp=60)
-plot(diminus, color=color.red, linewidth=1, title="DI-", transp=60)
+plot(adx_signal, title="ADX", color=adx_color, linewidth=2, transp=80)
+// plot(sig, title="ADX", color=adx_color, style=plot.style_columns, linewidth = 2, transp=90)
+plot(diplus, color=color.green, linewidth=1, title="DI+", transp=90)
+plot(diminus, color=color.red, linewidth=1, title="DI-", transp=90)
 plot(cross(diplus,diminus) ? diminus : na, color=adx_color, style=plot.style_circles, linewidth=3, title="Cross DI") 
 
 
@@ -55,5 +56,8 @@ plotdiv = plot(rsi_divergence, title="RSI Divergence", color = rsi_divergence > 
 // band0 = hline(30,color=red)
 band = hline(0)
 
-plotarrow(down-up < 0 and rsi_divergence > 0 ? 1 : na, title="LONG", colorup=color.lime, maxheight=30, minheight=10, transp=0)
-plotarrow(down-up > 0 and rsi_divergence < 0 ? -1 : na, title="SHORT", colordown=color.red, maxheight=30, minheight=10, transp=0)
+long_signal = crossover(rsi_divergence, 0) and (adx_signal>ADX_Entry)
+short_signal = crossunder(rsi_divergence, 0) and (adx_signal>ADX_Entry)
+
+plotshape(long_signal, "LONG", shape.triangleup, location.bottom, color.lime, size = size.small)
+plotshape(short_signal, "SHORT", shape.triangledown, location.top, color.red, size = size.small)
