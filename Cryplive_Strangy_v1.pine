@@ -3,11 +3,11 @@
 //@version=4
 // ADI DI
 // RSI Divergence
-study("Cryplive_Strangy_v1")
+study("Cryplive_Strangy_v1", overlay=true)
 
 adxlen = input(9, title="ADX Smoothing")
 dilen = input(14, title="DI Length")
-ADX_Entry = input(20, title="ADX Entry")
+ADX_Entry = input(15, title="ADX Entry")
 
 //ADX
 dirmov(len) =>
@@ -33,7 +33,7 @@ adx_signal = sig
 adx_color = diminus-diplus > 0 ? color.red : color.lime
 // bgcolor(adx_color, transp=90)
 plot(adx_signal, title="ADX", color=adx_color, linewidth=2, transp=80)
-// plot(sig, title="ADX", color=adx_color, style=plot.style_columns, linewidth = 2, transp=90)
+plot(adx_signal, title="ADX", color=adx_color, style=plot.style_columns, linewidth = 2, transp=90)
 plot(diplus, color=color.green, linewidth=1, title="DI+", transp=90)
 plot(diminus, color=color.red, linewidth=1, title="DI-", transp=90)
 plot(cross(diplus,diminus) ? diminus : na, color=adx_color, style=plot.style_circles, linewidth=3, title="Cross DI") 
@@ -51,13 +51,35 @@ rsi_slow = rsi_down_slow == 0 ? 100 : rsi_up_slow == 0 ? 0 : 100 - (100 / (1 + r
 plot_rsi_fast = plot(rsi_fast, title="Fast RSI", color=color.blue, linewidth = 1, transp=80)
 plot_rsi_slow = plot(rsi_slow, title="Slow RSI", color=color.orange, linewidth = 1, transp=10)
 rsi_divergence = rsi_fast - rsi_slow
-plotdiv = plot(rsi_divergence, title="RSI Divergence", color = rsi_divergence > 0 ? color.lime:color.red, linewidth = 2)
+plotdiv = plot(rsi_divergence, title="RSI Divergence", color = rsi_divergence > 0 ? color.lime:color.red, linewidth = 2, transp=90)
 // band1 = hline(70,color=green)
 // band0 = hline(30,color=red)
 band = hline(0)
 
+//Stochastic
+smoothK = input(3, minval=1, title="smoothK")
+smoothD = input(3, minval=1, title="smoothD")
+lengthRSI = rsi_len_slow 
+lengthStoch = input(14, minval=1, title="Length Stochastic")
+
+rsi1 = rsi(close, lengthRSI)
+k = sma(stoch(rsi1, rsi1, rsi1, lengthStoch), smoothK)
+d = sma(k, smoothD)
+plot(k, color=color.white, title="smoothK")
+plot(d, color=color.orange, title="smoothD")
+// bgcolor(crossover(k,d) ? color.lime : na, transp=40)
+// bgcolor(crossunder(k,d) ? color.red : na, transp=40)
+
+
+
+
 long_signal = crossover(rsi_divergence, 0) and (adx_signal>ADX_Entry)
+
 short_signal = crossunder(rsi_divergence, 0) and (adx_signal>ADX_Entry)
 
-plotshape(long_signal, "LONG", shape.triangleup, location.bottom, color.lime, size = size.small)
-plotshape(short_signal, "SHORT", shape.triangledown, location.top, color.red, size = size.small)
+// plotshape(long_signal, "LONG", shape.triangleup, location.bottom, color.lime, size = size.small)
+// plotshape(short_signal, "SHORT", shape.triangledown, location.top, color.red, size = size.small)
+bgcolor(long_signal ? color.lime : na, transp=40)
+bgcolor(short_signal ? color.red : na, transp=40)
+plotchar(long_signal ? long_signal : na, title="RSI LE", char='RSI LE', location=location.bottom, color=color.lime, transp=0, offset=0)
+plotchar(short_signal ? short_signal : na, title="RSI SE", char='RSI SE', location=location.top, color=color.red, transp=0, offset=0)
