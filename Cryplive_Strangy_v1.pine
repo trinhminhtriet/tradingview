@@ -3,6 +3,7 @@
 //@version=4
 // ADI DI
 // RSI Divergence
+// Stochastic
 study("Cryplive_Strangy_v1", overlay=true)
 
 adxlen = input(9, title="ADX Smoothing")
