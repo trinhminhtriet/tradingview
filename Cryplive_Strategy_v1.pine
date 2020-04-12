@@ -1,10 +1,14 @@
+//@version=4
+
 // trinhminhtriet
 // https://triettrinh.com
-//@version=4
+// BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
+// Minimum deposit amount: 0.001 BTC
+
 // ADI DI
 // RSI Divergence
 // Stochastic
-study("Cryplive_Strangy_v1", overlay=true)
+study("Cryplive_Strategy_v1")
 
 adxlen = input(9, title="ADX Smoothing")
 dilen = input(14, title="DI Length")
@@ -66,25 +70,28 @@ lengthStoch = input(14, minval=1, title="Length Stochastic")
 rsi1 = rsi(close, lengthRSI)
 stoch_k = sma(stoch(rsi1, rsi1, rsi1, lengthStoch), smoothK)
 stoch_d = sma(stoch_k, smoothD)
-plot(stoch_k, color=color.blue, title="Stoch K", linewidth = 1, transp=80)
+plot(stoch_k, color=color.purple, title="Stoch K", linewidth = 1, transp=80)
 plot(stoch_d, color=color.orange, title="Stoch D", linewidth = 1, transp=80)
 
 stoch_up = crossover(stoch_k,stoch_d)
+plot(stoch_up ? stoch_k : na, color=color.green, style=plot.style_cross, linewidth=3, title="Cross Stochastic") 
 // bgcolor(stoch_up ? color.lime : na, transp=40)
 // plotchar(stoch_up ? stoch_up : na, title="Stoch LE", char='Stoch LE', location=location.bottom, color=color.lime, transp=0, offset=0)
 
 stoch_down = crossunder(stoch_k,stoch_d)
+plot(stoch_down ? stoch_k : na, color=color.red, style=plot.style_cross, linewidth=3, title="Cross Stochastic") 
 // bgcolor(stoch_down ? color.red : na, transp=40)
 // plotchar(stoch_down ? stoch_down : na, title="Stoch LE", char='Stoch LE', location=location.bottom, color=color.lime, transp=0, offset=0)
 
 
-long_signal = crossover(rsi_divergence, 0) and stoch_up and (adx_signal>ADX_Entry)
+long_signal = crossover(rsi_divergence, 0) and (stoch_k > stoch_d) and (adx_signal>ADX_Entry)
+short_signal = crossunder(rsi_divergence, 0) and (stoch_k < stoch_d) and (adx_signal>ADX_Entry)
 
-short_signal = crossunder(rsi_divergence, 0) and stoch_down and (adx_signal>ADX_Entry)
-
-plotshape(long_signal, "LONG", shape.triangleup, location.bottom, color.lime, size = size.small)
-plotshape(short_signal, "SHORT", shape.triangledown, location.top, color.red, size = size.small)
+long_color = color.lime
+short_color = color.red
 // bgcolor(long_signal ? color.lime : na, transp=40)
 // bgcolor(short_signal ? color.red : na, transp=40)
-// plotchar(long_signal ? long_signal : na, title="RSI LE", char='RSI LE', location=location.bottom, color=color.lime, transp=0, offset=0)
-// plotchar(short_signal ? short_signal : na, title="RSI SE", char='RSI SE', location=location.top, color=color.red, transp=0, offset=0)
+plotshape(long_signal, "LONG", shape.triangleup, location.bottom, long_color, size = size.small)
+plotshape(short_signal, "SHORT", shape.triangledown, location.top, short_color, size = size.small)
+plotchar(long_signal ? long_signal : na, title="Long Signal", char='B', location=location.bottom, color=color.white, transp=0, offset=0)
+plotchar(short_signal ? short_signal : na, title="Short Signal", char='S', location=location.top, color=color.white, transp=0, offset=0)
