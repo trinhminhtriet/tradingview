@@ -1,6 +1,7 @@
 // trinhminhtriet
 // https://triettrinh.com
-// Customize to trade in TF m1
+// BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
+// Minimum deposit amount: 0.001 BTC
 
 study("Cryplive_Buy_Sell_Signal", overlay = true)
 
