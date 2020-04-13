@@ -5,13 +5,13 @@
 // BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
 // Minimum deposit amount: 0.001 BTC
 
-study("Cryplive_Divergence", overlay=true, max_bars_back = 4000)
+study("Cryplive_Divergence", overlay=true)
 lb = input(5, title="Left Bars", minval=1)
 rb = input(5, title="Right Bars", minval=1)
 showhidden = input(false, title = "Show Hidden Divergences")
 chcut = input(false, title = "Check Cut-Through in indicators !")
 shownum = input(true, title="Show Divergence Number")
-showindis = input(false, title="Show Indicator Names")
+showindis = input(true, title="Show Indicator Names")
 showpivot = input(false, title="Show Pivot Points")
 chwidth = input(true, title = "Change Width by Number of Divergence")
 showlimit = input(1, title="Minimum Number of Divergence", minval = 1, maxval = 11)
@@ -52,7 +52,7 @@ vwmacd = maFast - maSlow
 Cmfm = ((close-low) - (high-close)) / (high - low)
 Cmfv = Cmfm * volume
 cmf = sma(Cmfv, 21) / sma(volume,21)
-// Moneyt Flow Index
+// Money Flow Index
 Mfi = mfi(close, 14)
 
 float top = na
@@ -185,7 +185,7 @@ newareah := top ? false : nz(newareah[1], false)
 if negdivergence >= showlimit or hposdivergence >= showlimit
     var line divlh = na
     var label labh = na
-    if newareah                             // we remove old line until It reaches new pivot point (like animation ;)
+    if newareah
         line.delete(divlh)
         label.delete(labh)
     newwd = not showhidden ?
@@ -323,7 +323,7 @@ newareal := bot ? false : nz(newareal[1], false)
 if posdivergence >= showlimit or hnegdivergence >= showlimit
     var line divl = na
     var label lab = na
-    if newareal                             // we remove old line until It reaches new pivot point (like animation ;)
+    if newareal
         line.delete(divl)
         label.delete(lab)
     newwd = not showhidden ?
@@ -347,3 +347,4 @@ alertcondition(posdivergence >= showlimit and not showhidden, title='Positive Di
 alertcondition(negdivergence >= showlimit and not showhidden, title='Negative Divergence', message='Negative Divergence')
 alertcondition(hposdivergence >= showlimit and showhidden, title='Positive Hidden Divergence', message='Positive Hidden Divergence')
 alertcondition(hnegdivergence >= showlimit and showhidden, title='Negative Hidden Divergence', message='Negative Hidden Divergence')
+alertcondition((posdivergence >= showlimit or negdivergence >= showlimit) and not showhidden, title='Divergence', message='Divergence: {{close}}')
