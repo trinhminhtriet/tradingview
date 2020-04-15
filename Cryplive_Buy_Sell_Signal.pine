@@ -3,7 +3,7 @@
 // BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
 // Minimum deposit amount: 0.001 BTC
 
-study("Cryplive_Buy_Sell_Signal", overlay = true)
+study("Cryplive_Buy_Sell_Signal", overlay=true)
 
 Factor=input(1, minval=1,maxval = 100)
 Pd=input(7, minval=1,maxval = 100)
@@ -30,20 +30,22 @@ plotarrow(Trend == 1 and Trend[1] == -1 ? Trend : na, title="Up Entry Arrow", co
 plotarrow(Trend == -1 and Trend[1] == 1 ? Trend : na, title="Down Entry Arrow", colordown=red, maxheight=30, minheight=10, transp=0)
 
 
-//Cryplive_Support_Resistance
-window1 = input(title='lookback window 1:', type=integer, defval=8)
-window2 = input(title='lookback window 2:', type=integer, defval=21)
+BB_length = input(24, minval=1, title="BB Length")
+BB_sdev = input(2.0, minval=0.001, maxval=50, title="StdDev")
+OutBBThreshold = input(80, minval=1, title="Out BB Threshold")
 
-top1 = valuewhen(high >= highest(high, window1), high, 0)
-bot1 = valuewhen(low <= lowest(low, window1), low, 0)
-top2 = valuewhen(high >= highest(high, window2), high, 0)
-bot2 = valuewhen(low <= lowest(low, window2), low, 0)
+// drawing BB
+dev = BB_sdev * stdev(close, BB_length)
+upper = sma(close, BB_length) + dev
+lower = sma(close, BB_length) - dev
 
-t1 = plot(top1, color=top1 != top1[1] ? na : red, title='Resistance 1')
-t2 = plot(top2, color=top2 != top2[1] ? na : red, title='Resistance 2')
+plot(upper, title="BB Upper", color=#2B8A84, linewidth=1)
+plot(lower, title="BB Lower", color=#2B8A84, linewidth=1)
+plot(sma(close, BB_length), title="BB Basic (MA50)", color=fuchsia, linewidth=1)
 
-b1 = plot(bot1, color=bot1 != bot1[1] ? na : green, title='Support 1')
-b2 = plot(bot2, color=bot2 != bot2[1] ? na : green, title='Support 2')
 
-fill(t1, t2, color=orange, transp=80)
-fill(b1, b2, color=olive, transp=80)
+//MAs
+plot(ema(close,200), title="EMA200",color = red)
+plot(ema(close,100), title="EMA100",color = orange)
+plot(sma(close,50), title="EMA50",color = yellow)
+plot(ema(close,21), title="EMA21",color = green)
