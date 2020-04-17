@@ -73,7 +73,7 @@ rsi_divergence = rsi_fast - rsi_slow
 // band1 = hline(70,color=green)
 // band0 = hline(30,color=red)
 // modified RSI by HPotter
-rsi_histo_modify= input(1.5, title="RSI Modification")
+rsi_histo_modify= input(10, title="RSI Modification")
 rsi_histo_value = (rsi(rsi_src_slow, rsi_len_slow) - 50) * rsi_histo_modify
 rsi_histo_color = iff(rsi_histo_value >= 0 , color.blue, iff(rsi_histo_value < 0, color.red, color.black))
 plot(rsi_histo_value, color=rsi_histo_color, title="RSI Modification", linewidth  = 1)
