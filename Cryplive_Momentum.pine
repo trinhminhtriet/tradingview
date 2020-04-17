@@ -38,7 +38,6 @@ val = linreg(source  -  avg(avg(highest(high, lengthKC), lowest(low, lengthKC)),
 bcolor = iff( val > 0, 
             iff( val > nz(val[1]), lime, green),
             iff( val < nz(val[1]), red, maroon))
-scolor = noSqz ? blue : sqzOn ? black : gray 
+scolor = noSqz ? blue : sqzOn ? white : gray 
 plot(val, color=bcolor, style=histogram, linewidth=1, title='Momentum')
 plot(0, color=scolor, style=cross, linewidth=1, title='line 0')
-
