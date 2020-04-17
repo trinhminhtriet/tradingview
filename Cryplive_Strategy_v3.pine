@@ -1,0 +1,129 @@
+//@version=4
+
+// trinhminhtriet
+// https://triettrinh.com
+// BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
+// Minimum deposit amount: 0.001 BTC
+
+// ADI DI
+// RSI Divergence
+// Stochastic
+study("Cryplive_Strategy_v3")
+
+// Inputs 
+di_length = input(7, minval=1, title="DI Length")
+adx_smoothing = input(3, title="ADX Smoothing", minval=1, maxval=8)
+adx_step = input(title="Step", type=input.integer, defval=2, maxval=50, minval=0)
+adx_style = plot.style_area 
+//adx_style = input(title="ADX Style", defval="Area", options=["Area", "V.Bars"])
+//adx_style = s == "Area" ? plot.style_area : plot.style_columns
+adx_keylevel = input(25, title="ADX key level", type=input.integer, minval=1, maxval=100)
+adx_vol_weighted = input(title="Volume Weighted?", defval=false)
+adx_vol = adx_vol_weighted ? volume : 1
+
+// calculations -- these are same as the classic ADX/DMI with couple differences; the use of wma() and the volume weighting
+up = change(high)
+down = -change(low)
+plusDM = na(up) ? na : (up > down and up > 0 ? up * adx_vol : 0)
+minusDM = na(down) ? na : (down > up and down > 0 ? down * adx_vol : 0)
+trur = wma(tr * adx_vol, di_length)
+plus = fixnan(100 * wma(plusDM, di_length) / trur)
+minus = fixnan(100 * wma(minusDM, di_length) / trur)
+
+// implement wma-based smoothing here -- we will not smoothen the ADX line any further
+pluss = wma(plus, adx_smoothing)
+minuss = wma(minus, adx_smoothing)
+sum = pluss + minuss
+
+// ADX line here is "unrestricted"  -- meaning it can fall below zero when it detects trend down
+adx1 = 100 * (pluss - minuss) / (sum == 0 ? 1 : sum)
+adx =  adx_step > 0 ? round(adx1/adx_step) * adx_step : adx1 
+
+// Plot colors & other preps
+col_grow_above = #175707
+col_fall_above = #66bb6a           
+col_grow_below = #e01313
+col_fall_below = #e57373
+adx_color = adx >= 0 ? (adx > adx[1] ? col_grow_above : col_fall_above) : (adx < adx[1] ? col_grow_below : col_fall_below) 
+
+// Plots -- start with the lines, then the background then main plot lines
+hline(0, color = color.gray, linestyle = hline.style_solid, editable = false, title='line0')
+hline(adx_keylevel, color = color.gray, linestyle = hline.style_solid, editable = false, title='ADX Keylevel')
+
+plot(adx, title='ADXS', style=adx_style, color = adx_color, transp=80, linewidth = 1)
+plot(pluss, color=color.green, title="+DI", linewidth = 1, transp=90)
+plot(minuss, color=color.red, title="-DI", linewidth = 1, transp=90)
+plot(cross(pluss,minuss) ? pluss : na, color=adx_color, style=plot.style_circles, linewidth=4, title="Cross DI") 
+
+//RSI Divergence
+rsi_src_fast = close, rsi_len_fast = input(5, minval=1, title="Length Fast RSI")
+rsi_src_slow = close, rsi_len_slow = input(14,minval=1, title="Length Slow RSI")
+rsi_up_fast = rma(max(change(rsi_src_fast), 0), rsi_len_fast)
+rsi_down_fast = rma(-min(change(rsi_src_fast), 0), rsi_len_fast)
+rsi_fast = rsi_down_fast == 0 ? 100 : rsi_up_fast == 0 ? 0 : 100 - (100 / (1 + rsi_up_fast / rsi_down_fast))
+rsi_up_slow = rma(max(change(rsi_src_slow), 0), rsi_len_slow)
+rsi_down_slow = rma(-min(change(rsi_src_slow), 0), rsi_len_slow)
+rsi_slow = rsi_down_slow == 0 ? 100 : rsi_up_slow == 0 ? 0 : 100 - (100 / (1 + rsi_up_slow / rsi_down_slow))
+plot_rsi_fast = plot(rsi_fast, title="Fast RSI", color=color.blue, linewidth = 1, transp=80)
+plot_rsi_slow = plot(rsi_slow, title="Slow RSI", color=color.yellow, linewidth = 1, transp=30)
+rsi_divergence = rsi_fast - rsi_slow
+// plot(rsi_divergence, title="RSI Divergence", color = rsi_divergence > 0 ? color.lime:color.red, linewidth = 2, transp=60)
+// band1 = hline(70,color=green)
+// band0 = hline(30,color=red)
+band = hline(0)
+
+//Stochastic
+smoothK = input(3, minval=1, title="smoothK")
+smoothD = input(3, minval=1, title="smoothD")
+lengthRSI = rsi_len_slow 
+lengthStoch = input(14, minval=1, title="Length Stochastic")
+
+rsi1 = rsi(close, lengthRSI)
+stoch_k = sma(stoch(rsi1, rsi1, rsi1, lengthStoch), smoothK)
+stoch_d = sma(stoch_k, smoothD)
+plot(stoch_k, color=color.purple, title="Stoch K", linewidth = 1, transp=80)
+plot(stoch_d, color=color.orange, title="Stoch D", linewidth = 1, transp=80)
+plot(cross(stoch_k,stoch_d) ? stoch_k : na, color=stoch_k-stoch_d>0 ? color.green : color.red, style=plot.style_cross, linewidth=4, title="Cross Stochastic")
+
+// stoch_up = crossover(stoch_k,stoch_d)
+// plot(stoch_up ? stoch_k : na, color=color.green, style=plot.style_cross, linewidth=3, title="Cross Stochastic") 
+// bgcolor(stoch_up ? color.lime : na, transp=40)
+// plotchar(stoch_up ? stoch_up : na, title="Stoch LE", char='Stoch LE', location=location.bottom, color=color.lime, transp=0, offset=0)
+
+// stoch_down = crossunder(stoch_k,stoch_d)
+// plot(stoch_down ? stoch_k : na, color=color.red, style=plot.style_cross, linewidth=3, title="Cross Stochastic") 
+// bgcolor(stoch_down ? color.red : na, transp=40)
+// plotchar(stoch_down ? stoch_down : na, title="Stoch LE", char='Stoch LE', location=location.bottom, color=color.lime, transp=0, offset=0)
+
+
+// CCI_OBV
+cciobv_src = close
+cciobv_length = input(20, minval=1, title="CCI Length")
+cciobv_threshold = input(0, title="CCI threshold for OBV coding")
+cciobv_lengthema = input(13, title="EMA length")
+cciobv_obv_f(cciobv_src) => 
+   cum(change(cciobv_src) > 0 ? volume : change(cciobv_src) < 0 ? -volume : 0*volume)
+    
+cciobv_obv = cciobv_obv_f(cciobv_src)
+cciobv_cci = cci(cciobv_src, cciobv_length)
+cciobv_color = cciobv_cci>=cciobv_threshold ? color.green : color.red
+cciobv_chk = cciobv_cci>=cciobv_threshold ? 1 : 0
+cciobv_ema_line = ema(cciobv_cci,cciobv_lengthema)
+
+// bgcolor(crossover(cciobv_cci, -100) and (cciobv_cci < cciobv_ema_line) ? color.green : na, transp=40)
+// bgcolor(crossunder(cciobv_cci, 100) and (cciobv_cci > cciobv_ema_line) ? color.red : na, transp=40)
+plot(cciobv_cci, color=cciobv_cci>0?color.lime:color.red, title="CCI", linewidth = 1, transp=50)
+
+//End of CCI_OBV
+
+long_signal = crossover(rsi_divergence, 0) and (stoch_k > stoch_d) and (adx>adx_keylevel)
+short_signal = crossunder(rsi_divergence, 0) and (stoch_k < stoch_d) and (adx>adx_keylevel)
+
+long_color = color.lime
+short_color = color.red
+// bgcolor(long_signal ? color.lime : na, transp=40)
+// bgcolor(short_signal ? color.red : na, transp=40)
+// plotshape(long_signal, "LONG", shape.triangleup, location.bottom, long_color, size = size.small)
+// plotshape(short_signal, "SHORT", shape.triangledown, location.top, short_color, size = size.small)
+// plotchar(long_signal ? long_signal : na, title="Long Signal", char='B', location=location.bottom, color=color.white, transp=0, offset=0)
+// plotchar(short_signal ? short_signal : na, title="Short Signal", char='S', location=location.top, color=color.white, transp=0, offset=0)
