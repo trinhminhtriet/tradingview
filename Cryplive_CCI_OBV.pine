@@ -15,5 +15,5 @@ obv(src) =>
     
 o=obv(src)
 c=cci(src, length)
-plot(o, color=c>=threshold?green:red, title="OBV_CCI coded", linewidth=2)
-plot(ema(o,lengthema), color=orange, linewidth=2)
+plot(o, color=c>=threshold?green:red, title="OBV", linewidth=1)
+plot(ema(o,lengthema), color=orange, title="EMA OBV", linewidth=1)
