@@ -56,8 +56,10 @@ plot(minuss, color=color.red, title="-DI", linewidth = 1, transp=90)
 plot(cross(pluss,minuss) ? pluss : na, color=adx_color, style=plot.style_circles, linewidth=4, title="Cross DI") 
 
 //RSI Divergence
-rsi_src_fast = close, rsi_len_fast = input(5, minval=1, title="Length Fast RSI")
-rsi_src_slow = close, rsi_len_slow = input(14,minval=1, title="Length Slow RSI")
+rsi_src_fast = close
+rsi_len_fast = input(5, minval=1, title="Length Fast RSI")
+rsi_src_slow = close
+rsi_len_slow = input(14,minval=1, title="Length Slow RSI")
 rsi_up_fast = rma(max(change(rsi_src_fast), 0), rsi_len_fast)
 rsi_down_fast = rma(-min(change(rsi_src_fast), 0), rsi_len_fast)
 rsi_fast = rsi_down_fast == 0 ? 100 : rsi_up_fast == 0 ? 0 : 100 - (100 / (1 + rsi_up_fast / rsi_down_fast))
@@ -70,7 +72,11 @@ rsi_divergence = rsi_fast - rsi_slow
 // plot(rsi_divergence, title="RSI Divergence", color = rsi_divergence > 0 ? color.lime:color.red, linewidth = 2, transp=60)
 // band1 = hline(70,color=green)
 // band0 = hline(30,color=red)
-band = hline(0)
+// modified RSI by HPotter
+rsi_histo_modify= input(1.5, title="RSI Modification")
+rsi_histo_value = (rsi(rsi_src_slow, rsi_len_slow) - 50) * rsi_histo_modify
+rsi_histo_color = iff(rsi_histo_value >= 0 , color.blue, iff(rsi_histo_value < 0, color.red, color.black))
+plot(rsi_histo_value, color=rsi_histo_color, title="RSI Modification", linewidth  = 1)
 
 //Stochastic
 smoothK = input(3, minval=1, title="smoothK")
