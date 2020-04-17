@@ -3,6 +3,8 @@
 // BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
 // Minimum deposit amount: 0.001 BTC
 
+// Momentum
+
 study(shorttitle = "Cryplive_Momentum", title="Cryplive_Momentum", overlay=false)
 
 length = input(20, title="BB Length")
@@ -37,6 +39,6 @@ bcolor = iff( val > 0,
             iff( val > nz(val[1]), lime, green),
             iff( val < nz(val[1]), red, maroon))
 scolor = noSqz ? blue : sqzOn ? black : gray 
-plot(val, color=bcolor, style=histogram, linewidth=1)
-plot(0, color=scolor, style=cross, linewidth=1)
+plot(val, color=bcolor, style=histogram, linewidth=1, title='Momentum')
+plot(0, color=scolor, style=cross, linewidth=1, title='line 0')
 
