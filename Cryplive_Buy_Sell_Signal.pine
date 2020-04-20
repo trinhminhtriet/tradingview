@@ -30,22 +30,29 @@ plotarrow(Trend == 1 and Trend[1] == -1 ? Trend : na, title="Up Entry Arrow", co
 plotarrow(Trend == -1 and Trend[1] == 1 ? Trend : na, title="Down Entry Arrow", colordown=red, maxheight=30, minheight=10, transp=0)
 
 
-BB_length = input(24, minval=1, title="BB Length")
+// BB input
+BB_length = input(21, minval=1, title="BB Length")
 BB_sdev = input(2.0, minval=0.001, maxval=50, title="StdDev")
 OutBBThreshold = input(80, minval=1, title="Out BB Threshold")
 
 // drawing BB
 dev = BB_sdev * stdev(close, BB_length)
-upper = sma(close, BB_length) + dev
-lower = sma(close, BB_length) - dev
+BB_basic = sma(close, BB_length)
+BB_upper = BB_basic + dev
+BB_lower = BB_basic - dev
 
-plot(upper, title="BB Upper", color=#2B8A84, linewidth=1)
-plot(lower, title="BB Lower", color=#2B8A84, linewidth=1)
-plot(sma(close, BB_length), title="BB Basic (MA50)", color=fuchsia, linewidth=1)
+BB_basic_up = BB_basic > BB_basic[1]
+BB_basic_down = BB_basic < BB_basic[1]
+BB_basic_color = BB_basic_up ? green : BB_basic_down ? red : blue
+
+plot(BB_upper, title="BB Upper", color=BB_basic_color, linewidth=1)
+plot(BB_lower, title="BB Lower", color=BB_basic_color, linewidth=1)
+plot(BB_basic, title="BB Basic", color=BB_basic_color, linewidth=1)
 
 
 //MAs
-plot(ema(close,200), title="EMA200",color = red)
-plot(ema(close,100), title="EMA100",color = orange)
-plot(sma(close,50), title="EMA50",color = yellow)
-plot(ema(close,21), title="EMA21",color = green)
+plot(ema(close,200), title="EMA200",color = red, linewidth = 1, transp=80)
+plot(ema(close,100), title="EMA100",color = orange, linewidth = 1, transp=80)
+plot(sma(close,50), title="EMA50",color = yellow, linewidth = 1, transp=80)
+plot(sma(close,13), title="EMA13",color = yellow, linewidth = 1, transp=80)
+plot(sma(close,5), title="EMA5",color = yellow, linewidth = 1, transp=80)
