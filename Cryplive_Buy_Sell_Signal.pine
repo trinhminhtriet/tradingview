@@ -8,10 +8,8 @@ study("Cryplive_Buy_Sell_Signal", overlay=true)
 Factor=input(1, minval=1,maxval = 100)
 Pd=input(7, minval=1,maxval = 100)
 
-
 Up=hl2-(Factor*atr(Pd))
 Dn=hl2+(Factor*atr(Pd))
-
 
 TrendUp=close[1]>TrendUp[1]? max(Up,TrendUp[1]) : Up
 TrendDown=close[1]<TrendDown[1]? min(Dn,TrendDown[1]) : Dn
@@ -31,28 +29,29 @@ plotarrow(Trend == -1 and Trend[1] == 1 ? Trend : na, title="Down Entry Arrow", 
 
 
 // BB input
+BB_showhide = input(true, title="Show Bollinger Band")
 BB_length = input(21, minval=1, title="BB Length")
 BB_sdev = input(2.0, minval=0.001, maxval=50, title="StdDev")
 OutBBThreshold = input(80, minval=1, title="Out BB Threshold")
 
-// drawing BB
-dev = BB_sdev * stdev(close, BB_length)
+// BB basic EMA 21
 BB_basic = sma(close, BB_length)
+cci = cci(close, BB_length)
+BB_cci_color = cci>=0 ? green : red
+plot(BB_basic, title="BB Basic", color=BB_cci_color, linewidth=2)
+
+dev = BB_sdev * stdev(close, BB_length)
 BB_upper = BB_basic + dev
 BB_lower = BB_basic - dev
 
-BB_basic_up = BB_basic > BB_basic[1]
-BB_basic_down = BB_basic < BB_basic[1]
-BB_basic_color = BB_basic_up ? green : BB_basic_down ? red : blue
-
-plot(BB_upper, title="BB Upper", color=BB_basic_color, linewidth=1)
-plot(BB_lower, title="BB Lower", color=BB_basic_color, linewidth=1)
-plot(BB_basic, title="BB Basic", color=BB_basic_color, linewidth=1)
+plot(BB_showhide ? BB_upper : na, title="BB Upper", color=#2B8A84, linewidth=1)
+plot(BB_showhide ? BB_lower : na, title="BB Lower", color=#2B8A84, linewidth=1)
 
 
 //MAs
-plot(ema(close,200), title="EMA200",color = red, linewidth = 1, transp=80)
-plot(ema(close,100), title="EMA100",color = orange, linewidth = 1, transp=80)
-plot(sma(close,50), title="EMA50",color = yellow, linewidth = 1, transp=80)
-plot(sma(close,13), title="EMA13",color = yellow, linewidth = 1, transp=80)
-plot(sma(close,5), title="EMA5",color = yellow, linewidth = 1, transp=80)
+EMA_showhide = input(true, title="Show EMA lines")
+plot(EMA_showhide ? ema(close, 200): na, title="EMA200", color = red, linewidth = 1, transp=60)
+plot(EMA_showhide ? ema(close, 100): na, title="EMA100", color = orange, linewidth = 1, transp=60)
+plot(EMA_showhide ? ema(close, 50): na, title="EMA50", color = yellow, linewidth = 1, transp=60)
+plot(EMA_showhide ? ema(close, 13): na, title="EMA13", color = purple, linewidth = 1, transp=60)
+plot(EMA_showhide ? ema(close, 5): na, title="EMA5", color = white, linewidth = 1, transp=60)
