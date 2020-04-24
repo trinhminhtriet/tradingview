@@ -48,7 +48,7 @@ adx_color = adx >= 0 ? (adx > adx[1] ? col_grow_above : col_fall_above) : (adx <
 
 // Plots -- start with the lines, then the background then main plot lines
 hline(0, color = color.gray, linestyle = hline.style_solid, editable = false, title='line0')
-hline(adx_keylevel, color = color.gray, linestyle = hline.style_solid, editable = false, title='ADX Keylevel')
+// hline(adx_keylevel, color = color.gray, linestyle = hline.style_solid, editable = false, title='ADX Keylevel')
 
 plot(adx, title='ADXS', style=adx_style, color = adx_color, transp=80, linewidth = 1)
 plot(pluss, color=color.green, title="+DI", linewidth = 1, transp=90)
