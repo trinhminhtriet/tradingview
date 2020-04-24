@@ -1,3 +1,5 @@
+//@version=4
+
 // trinhminhtriet
 // https://triettrinh.com
 // BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
@@ -6,14 +8,21 @@
 // CCI coded OBV
 
 study("Cryplive_CCI_OBV", shorttitle="Cryplive_CCI_OBV")
-src = close
-length = input(20, minval=1, title="CCI Length")
-threshold=input(0, title="CCI threshold for OBV coding")
-lengthema=input(13, title="EMA length")
-obv(src) => 
-    cum(change(src) > 0 ? volume : change(src) < 0 ? -volume : 0*volume)
+cciobv_src = close
+cciobv_length = input(20, minval=1, title="CCI Length")
+cciobv_threshold = input(0, title="CCI threshold for OBV coding")
+cciobv_lengthema = input(13, title="EMA length")
+cciobv_obv_f(cciobv_src) => 
+   cum(change(cciobv_src) > 0 ? volume : change(cciobv_src) < 0 ? -volume : 0*volume)
     
-o=obv(src)
-c=cci(src, length)
-plot(o, color=c>=threshold?green:red, title="OBV", linewidth=1)
-plot(ema(o,lengthema), color=orange, title="EMA OBV", linewidth=1)
+cciobv_obv = cciobv_obv_f(cciobv_src)
+cciobv_cci = cci(cciobv_src, cciobv_length)
+cciobv_color = cciobv_cci>=cciobv_threshold ? color.green : color.red
+cciobv_chk = cciobv_cci>=cciobv_threshold ? 1 : 0
+cciobv_ema_line = ema(cciobv_obv,cciobv_lengthema)
+
+bgcolor(crossover(cciobv_cci, -100) ? color.lime : na, transp=40)
+bgcolor(crossunder(cciobv_cci, 100) ? color.red : na, transp=40)
+
+plot(cciobv_obv, color=cciobv_color, title="OBV", linewidth=1)
+plot(cciobv_ema_line, color=color.white, title="EMA OBV", linewidth=1, transp=50)
