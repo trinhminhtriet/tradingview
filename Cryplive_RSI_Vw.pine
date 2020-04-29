@@ -34,18 +34,17 @@ longrsis = step > 0 ? round(longrsi/step) * step : longrsi
 
 //Plot
 //Plot levels and sentiment first, so the visual order is correct - doesn't cover the main plot
-zeroline = hline(0, title = 'Zero Line', color=color.yellow, linestyle=hline.style_solid)
-hline(40, title = 'Strong Up Level', color=color.green, linestyle=hline.style_dotted)
-hline(-40, title = 'Strong Down Level', color=color.red, linestyle=hline.style_dotted)
+zeroline = hline(0, title = 'Zero Line', color=color.gray, linestyle=hline.style_solid)
+hline(40, title = 'Strong Up Level', color=color.green, linestyle=hline.style_dashed)
+hline(-40, title = 'Strong Down Level', color=color.red, linestyle=hline.style_dashed)
 
-plot(longrsis, title='Sentiment', style=plot.style_area , transp=20, color=longrsis >=0 ? color.green : color.red , linewidth=2)
+plot(longrsis, title='Sentiment', style=plot.style_area, transp=80, color=longrsis >=0 ? color.green : color.red , linewidth=1)
 
-plot(rsiraw100, color=color.purple)
-plot(rsi, title='C_RSI',style=plot.style_line , transp=20, color= rsi >=0 ? color.aqua : color.orange , linewidth=2)
+plot(rsiraw100, title='RSI 100', style=plot.style_line, transp=20, color=color.purple, linewidth=1)
+plot(rsi, title='RSI Smooth', style=plot.style_line, transp=20, color= rsi >=0 ? color.aqua : color.orange , linewidth=1)
 
+shortSignal = rsi < 0 and rsi[1] >= 0 
+plotshape(shortSignal, title = "Sell", style=shape.triangledown, location = location.top, transp = 20, size=size.small, color = color.red, offset = -1 )
 
-SignalDn = rsi < 0 and rsi[1] >= 0 
-plotshape(SignalDn, title = "Sell", style=shape.triangledown, location = location.top, transp = 20, size=size.small, color = color.red, offset = -1 )
-
-SignalUp = rsi >=0 and rsi[1] < 0 
-plotshape(SignalUp, title = "Buy", style=shape.triangleup, location = location.bottom, transp = 20, size=size.small, color = color.green, offset = -1 )
+longSignal = rsi >=0 and rsi[1] < 0 
+plotshape(longSignal, title = "Buy", style=shape.triangleup, location = location.bottom, transp = 20, size=size.small, color = color.green, offset = -1 )
