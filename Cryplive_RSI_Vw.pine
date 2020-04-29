@@ -1,0 +1,51 @@
+//@version=4
+
+// trinhminhtriet
+// https://triettrinh.com
+// BTC (>0.001): 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
+// ETH (>0.01): 0x8190e253a57d940ea9521f8bf398996c524927d9
+
+study(title="Cryplive_RSI_Vw", shorttitle="Cryplive_RSI_Vw", scale=scale.right, precision=2)
+
+//inputs
+src = close
+len = input(10, minval=1, title="Length")
+sentiment = input(3, minval=1, title="Sentiment Factor")
+smooth = input(3, minval=1, title="Smoothing")
+vw = input(defval = true, title="Volume Weighted ?"  )
+step = input(title="Step", defval=5, maxval=50, minval=0, step=5)
+
+//Calculations  -- prefer to use wma 
+v = vw ? volume : 1
+longlen = sentiment * len
+
+up = wma(max(change(src)*v, 0), len)
+down = wma(-min(change(src)*v, 0), len)
+rsiraw= down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
+rsiraw100 = rsiraw *2 -100
+rsi = wma(rsiraw100, smooth)
+
+longup = wma(max(change(src)*v, 0), longlen)
+longdown = wma(-min(change(src)*v, 0), longlen)
+longrsiraw= longdown == 0 ? 100 : longup == 0 ? 0 : 100 - (100 / (1 + longup / longdown))
+longrsiraw100 = longrsiraw *2 -100
+longrsi = wma(longrsiraw100, smooth)
+longrsis = step > 0 ? round(longrsi/step) * step : longrsi 
+
+//Plot
+//Plot levels and sentiment first, so the visual order is correct - doesn't cover the main plot
+zeroline = hline(0, title = 'Zero Line', color=color.yellow, linestyle=hline.style_solid)
+hline(40, title = 'Strong Up Level', color=color.green, linestyle=hline.style_dotted)
+hline(-40, title = 'Strong Down Level', color=color.red, linestyle=hline.style_dotted)
+
+plot(longrsis, title='Sentiment', style=plot.style_area , transp=20, color=longrsis >=0 ? color.green : color.red , linewidth=2)
+
+plot(rsiraw100, color=color.purple)
+plot(rsi, title='C_RSI',style=plot.style_line , transp=20, color= rsi >=0 ? color.aqua : color.orange , linewidth=2)
+
+
+SignalDn = rsi < 0 and rsi[1] >= 0 
+plotshape(SignalDn, title = "Sell", style=shape.triangledown, location = location.top, transp = 20, size=size.small, color = color.red, offset = -1 )
+
+SignalUp = rsi >=0 and rsi[1] < 0 
+plotshape(SignalUp, title = "Buy", style=shape.triangleup, location = location.bottom, transp = 20, size=size.small, color = color.green, offset = -1 )
