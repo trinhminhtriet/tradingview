@@ -2,8 +2,8 @@
 
 // trinhminhtriet
 // https://triettrinh.com
-// BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
-// Minimum deposit amount: 0.001 BTC
+// BTC (>0.001): 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
+// ETH (>0.01): 0x8190e253a57d940ea9521f8bf398996c524927d9
 
 // Divergence for many indicators
 // Bollinger bands
@@ -370,8 +370,9 @@ dev = BB_sdev * stdev(close, BB_length)
 BB_upper = BB_basic + dev
 BB_lower = BB_basic - dev
 
-plot(BB_showhide ? BB_upper : na, title="BB Upper", color=#2B8A84, linewidth=1)
-plot(BB_showhide ? BB_lower : na, title="BB Lower", color=#2B8A84, linewidth=1)
+BB_upper_plot = plot(BB_showhide ? BB_upper : na, title="BB Upper", color=#2B8A84, linewidth=1, transp=90)
+BB_lower_plot = plot(BB_showhide ? BB_lower : na, title="BB Lower", color=#2B8A84, linewidth=1, transp=90)
+fill(BB_upper_plot, BB_lower_plot)
 
 
 // EMA lines
