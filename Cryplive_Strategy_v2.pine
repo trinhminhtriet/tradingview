@@ -348,11 +348,6 @@ if posdivergence >= showlimit or hnegdivergence >= showlimit
         lab := label.new(bar_index, na, text=txt, color= showhidden ? color.olive : color.lime, textcolor = showhidden ? color.white : color.black, style = showhidden ? label.style_labeldown : label.style_labelup, yloc=yloc.belowbar)
     newareal := true
  
-alertcondition(posdivergence >= showlimit and not showhidden, title='Positive Divergence', message='Positive Divergence')
-alertcondition(negdivergence >= showlimit and not showhidden, title='Negative Divergence', message='Negative Divergence')
-alertcondition(hposdivergence >= showlimit and showhidden, title='Positive Hidden Divergence', message='Positive Hidden Divergence')
-alertcondition(hnegdivergence >= showlimit and showhidden, title='Negative Hidden Divergence', message='Negative Hidden Divergence')
-alertcondition((posdivergence >= showlimit or negdivergence >= showlimit) and not showhidden, title='Divergence', message='Divergence: {{close}}')
 
 // BB input
 CCI_showhide = input(true, title="Show CCI trend line")
@@ -370,9 +365,9 @@ dev = BB_sdev * stdev(close, BB_length)
 BB_upper = BB_basic + dev
 BB_lower = BB_basic - dev
 
-BB_upper_plot = plot(BB_showhide ? BB_upper : na, title="BB Upper", color=#2B8A84, linewidth=1, transp=90)
-BB_lower_plot = plot(BB_showhide ? BB_lower : na, title="BB Lower", color=#2B8A84, linewidth=1, transp=90)
-fill(BB_upper_plot, BB_lower_plot)
+BB_upper_plot = plot(BB_showhide ? BB_upper : na, title="BB Upper", color=#2B8A84, linewidth=1, transp=70)
+BB_lower_plot = plot(BB_showhide ? BB_lower : na, title="BB Lower", color=#2B8A84, linewidth=1, transp=70)
+fill(BB_upper_plot, BB_lower_plot, transp=99)
 
 
 // EMA lines
@@ -404,3 +399,11 @@ plot(close, offset = -displacement + 1, color=#459915, title="Lagging Span")
 p1 = plot(leadLine1, offset = displacement - 1, color=color.green, title="Lead 1")
 p2 = plot(leadLine2, offset = displacement - 1, color=color.red,  title="Lead 2")
 fill(p1, p2, color = leadLine1 > leadLine2 ? color.green : color.red)
+
+
+alertcondition(posdivergence >= showlimit and not showhidden, title='Positive Divergence', message='Positive Divergence')
+alertcondition(negdivergence >= showlimit and not showhidden, title='Negative Divergence', message='Negative Divergence')
+alertcondition(hposdivergence >= showlimit and showhidden, title='Positive Hidden Divergence', message='Positive Hidden Divergence')
+alertcondition(hnegdivergence >= showlimit and showhidden, title='Negative Hidden Divergence', message='Negative Hidden Divergence')
+
+alertcondition((posdivergence >= showlimit or negdivergence >= showlimit) and not showhidden, title='Tivergence', message='Tivergence: {{close}}')
