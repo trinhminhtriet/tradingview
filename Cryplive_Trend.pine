@@ -1,0 +1,25 @@
+//@version=4
+
+// trinhminhtriet
+// https://triettrinh.com
+// BTC (>0.001): 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
+// ETH (>0.01): 0x8190e253a57d940ea9521f8bf398996c524927d9
+
+study("Cryplive_Trend")
+
+wavetrend_n1 = input(10, "Channel Length")
+wavetrend_n2 = input(21, "Average Length")
+ 
+wavetrend_ap = hlc3 
+wavetrend_esa = ema(wavetrend_ap, wavetrend_n1)
+wavetrend_d = ema(abs(wavetrend_ap - wavetrend_esa), wavetrend_n1)
+wavetrend_ci = (wavetrend_ap - wavetrend_esa) / (0.015 * wavetrend_d)
+wavetrend_tci = ema(wavetrend_ci, wavetrend_n2)
+ 
+wavetrend_wt1 = wavetrend_tci
+wavetrend_wt2 = sma(wavetrend_wt1,4)
+
+plot(wavetrend_wt1, title='Wavetrend 1', color=color.green)
+plot(wavetrend_wt2, title='Wavetrend 2', color=color.red)
+plot(wavetrend_wt1-wavetrend_wt2, title='WT1-WT2', color=(wavetrend_wt1>wavetrend_wt2) ? color.lime : color.red, style=plot.style_columns, transp=60)
+//End of wavetrend
