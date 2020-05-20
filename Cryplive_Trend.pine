@@ -7,7 +7,7 @@
 
 study("Cryplive_Trend")
 
-wavetrend_n1 = input(10, "Channel Length")
+wavetrend_n1 = input(14, "Channel Length")
 wavetrend_n2 = input(21, "Average Length")
  
 wavetrend_ap = hlc3 
@@ -19,7 +19,10 @@ wavetrend_tci = ema(wavetrend_ci, wavetrend_n2)
 wavetrend_wt1 = wavetrend_tci
 wavetrend_wt2 = sma(wavetrend_wt1,4)
 
+wt_cross = wavetrend_wt1-wavetrend_wt2
+wt_color = (wt_cross>0) ? color.lime : color.red
 plot(wavetrend_wt1, title='Wavetrend 1', color=color.green)
 plot(wavetrend_wt2, title='Wavetrend 2', color=color.red)
-plot(wavetrend_wt1-wavetrend_wt2, title='WT1-WT2', color=(wavetrend_wt1>wavetrend_wt2) ? color.lime : color.red, style=plot.style_columns, transp=60)
-//End of wavetrend
+
+plot(cross(wavetrend_wt1,wavetrend_wt2) ? wavetrend_wt1 : na, color=wt_color, style=plot.style_circles, linewidth=3, title="Cross") 
+plot(wt_cross, title='WT1-WT2', color=wt_color, style=plot.style_columns, transp=70)
