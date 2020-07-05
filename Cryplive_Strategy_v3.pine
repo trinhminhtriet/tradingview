@@ -2,11 +2,11 @@
 
 // trinhminhtriet
 // https://triettrinh.com
-// BTC Address: 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
-// Minimum deposit amount: 0.001 BTC
+// BTC (>0.001): 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
+// ETH (>0.01): 0x8190e253a57d940ea9521f8bf398996c524927d9
 
-// ADI DI
-// RSI Divergence
+// RedK_Directional Index (CCI)
+// RSI HistoAlert Strategy
 // Stochastic
 study("Cryplive_Strategy_v3")
 
@@ -53,7 +53,7 @@ hline(0, color = color.gray, linestyle = hline.style_solid, editable = false, ti
 plot(adx, title='ADXS', style=adx_style, color = adx_color, transp=80, linewidth = 1)
 plot(pluss, color=color.green, title="+DI", linewidth = 1, transp=90)
 plot(minuss, color=color.red, title="-DI", linewidth = 1, transp=90)
-plot(cross(pluss,minuss) ? pluss : na, color=adx_color, style=plot.style_circles, linewidth=4, title="Cross DI") 
+plot(cross(pluss,minuss) ? pluss : na, color=adx_color, style=plot.style_cross, linewidth=4, title="Cross DI") 
 
 //RSI Divergence
 rsi_src_fast = close
@@ -72,11 +72,14 @@ rsi_divergence = rsi_fast - rsi_slow
 // plot(rsi_divergence, title="RSI Divergence", color = rsi_divergence > 0 ? color.lime:color.red, linewidth = 2, transp=60)
 // band1 = hline(70,color=green)
 // band0 = hline(30,color=red)
-// modified RSI by HPotter
-rsi_histo_modify= input(10, title="RSI Modification")
+// RSI HistoAlert Strategy
+rsi_histo_modify= input(5, title="RSI Modification")
 rsi_histo_value = (rsi(rsi_src_slow, rsi_len_slow) - 50) * rsi_histo_modify
 rsi_histo_color = iff(rsi_histo_value >= 0 , color.blue, iff(rsi_histo_value < 0, color.red, color.black))
-plot(rsi_histo_value, color=rsi_histo_color, title="RSI Modification", linewidth  = 1)
+plot(rsi_histo_value, color=rsi_histo_color, title="HRSI", linewidth  = 1)
+// plot(rsi_histo_value*5/1.5, color=rsi_histo_color, title="HRSI 5", linewidth  = 1)
+// hline(-10, color = color.lime, linestyle = hline.style_dashed, editable = false, title='line: -10')
+// hline(10, color = color.red, linestyle = hline.style_dashed, editable = false, title='line: 10')
 
 //Stochastic
 smoothK = input(3, minval=1, title="smoothK")
@@ -89,7 +92,7 @@ stoch_k = sma(stoch(rsi1, rsi1, rsi1, lengthStoch), smoothK)
 stoch_d = sma(stoch_k, smoothD)
 plot(stoch_k, color=color.purple, title="Stoch K", linewidth = 1, transp=80)
 plot(stoch_d, color=color.orange, title="Stoch D", linewidth = 1, transp=80)
-plot(cross(stoch_k,stoch_d) ? stoch_k : na, color=stoch_k-stoch_d>0 ? color.green : color.red, style=plot.style_cross, linewidth=4, title="Cross Stochastic")
+plot(cross(stoch_k,stoch_d) ? stoch_k : na, color=stoch_k-stoch_d>0 ? color.green : color.red, style=plot.style_circles, linewidth=4, title="Cross Stochastic")
 
 // stoch_up = crossover(stoch_k,stoch_d)
 // plot(stoch_up ? stoch_k : na, color=color.green, style=plot.style_cross, linewidth=3, title="Cross Stochastic") 
@@ -118,7 +121,8 @@ cciobv_ema_line = ema(cciobv_cci,cciobv_lengthema)
 
 // bgcolor(crossover(cciobv_cci, -100) and (cciobv_cci < cciobv_ema_line) ? color.green : na, transp=40)
 // bgcolor(crossunder(cciobv_cci, 100) and (cciobv_cci > cciobv_ema_line) ? color.red : na, transp=40)
-plot(cciobv_cci, color=cciobv_cci>0?color.lime:color.red, title="CCI", linewidth = 1, transp=50)
+// plot(cciobv_cci, color=cciobv_cci>0?color.lime:color.red, title="CCI", linewidth = 1, transp=50)
+plot(cciobv_cci/2, color=cciobv_cci>0?color.lime:color.red, title="CCI/2", linewidth = 1)
 
 //End of CCI_OBV
 
