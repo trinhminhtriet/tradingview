@@ -36,3 +36,5 @@ plot(up, color=color.green, linewidth=1, title="+DI")
 plot(down, color=color.red, linewidth=1, title="-DI")
 
 bgcolor(down-up > 0 ? color.red : color.lime, transp=90)
+bgcolor(crossup(up, down) ? color.lime : na, transp=40)
+bgcolor(crossdown(up, down) ? color.red : na, transp=40)
