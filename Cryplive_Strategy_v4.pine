@@ -1,4 +1,4 @@
-//@version=4
+// @version=4
 
 // trinhminhtriet
 // https://triettrinh.com
@@ -352,7 +352,7 @@ alertcondition(posdivergence >= showlimit and not showhidden, title='Positive Di
 alertcondition(negdivergence >= showlimit and not showhidden, title='Negative Divergence', message='Negative Divergence')
 alertcondition(hposdivergence >= showlimit and showhidden, title='Positive Hidden Divergence', message='Positive Hidden Divergence')
 alertcondition(hnegdivergence >= showlimit and showhidden, title='Negative Hidden Divergence', message='Negative Hidden Divergence')
-alertcondition((posdivergence >= showlimit or negdivergence >= showlimit) and not showhidden, title='Divergence', message='Divergence: {{close}}')
+alertcondition((posdivergence >= showlimit or negdivergence >= showlimit) and not showhidden, title='Tivergence', message='Tivergence: {{close}}')
 
 // BB input
 CCI_showhide = input(true, title="Show CCI trend line")
