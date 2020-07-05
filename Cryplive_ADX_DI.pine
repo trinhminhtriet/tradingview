@@ -1,11 +1,17 @@
+// @version=4
+
 // trinhminhtriet
 // https://triettrinh.com
-//@version=4
+// BTC (>0.001): 16Qg7G26iXKTPeGPLxofyptjT7UF85fMa5
+// ETH (>0.01): 0x8190e253a57d940ea9521f8bf398996c524927d9
+
+// ADX
+
 study("Cryplive_ADX_DI")
 
 adxlen = input(9, title="ADX Smoothing")
 dilen = input(14, title="DI Length")
-ADX_Entry = input(25, title="ADX Entry")
+ADX_Entry = input(22, title="ADX Entry")
 
 //ADX
 dirmov(len) =>
@@ -25,9 +31,8 @@ adx(dilen, adxlen) =>
 [sig, up, down] = adx(dilen, adxlen)
 
 plot(ADX_Entry, color=color.white, linewidth=1)
-plot(sig, color=color.black, linewidth=1, title="ADX")
-plot(up, color=color.green, linewidth=1, title="DI+")
-plot(down, color=color.red, linewidth=1, title="DI-")
+plot(sig, color=color.purple, linewidth=1, title="ADX")
+plot(up, color=color.green, linewidth=1, title="+DI")
+plot(down, color=color.red, linewidth=1, title="-DI")
 
-plot(cross(up,down) ? down : na, color= (down-up > 0 ? color.red : color.lime), style=plot.style_circles, linewidth=3, title="Cross") 
-bgcolor(down-up > 0 ? color.red : color.lime, transp=60)
+bgcolor(down-up > 0 ? color.red : color.lime, transp=90)
